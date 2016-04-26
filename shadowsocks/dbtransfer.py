@@ -112,7 +112,7 @@ class DbTransfer(object):
                     #stop out bandwidth user
                     logging.info('db stop server at port [%s] reason: out bandwidth' % (row[0]))
                     DbTransfer.send_command('remove: {"server_port":%s}' % row[0])
-                elif row[7] <= last_time
+                elif row[7] <= last_time:
                     #stop out expires user
                     logging.info('db stop server at port [%s] reason: out expires' % (row[0]))
                     DbTransfer.send_command('remove: {"server_port":%s}' % row[0])

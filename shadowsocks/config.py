@@ -6,6 +6,7 @@ MYSQL_PORT = 3306
 MYSQL_USER = 'root'
 MYSQL_PASS = 'root'
 MYSQL_DB = 'shadowsocks'
+MYSQL_TABLE = 'ss_user'
 
 MANAGE_PASS = 'passwd'
 #if you want manage in other server you should set this value to global ip
@@ -19,6 +20,7 @@ MANAGE_PORT = 23333
 SS_BIND_IP = '0.0.0.0'
 SS_METHOD = 'rc4-md5'
 
+SS_FAST_OPEN = False
 #LOG CONFIG
 LOG_ENABLE = False
 LOG_LEVEL = logging.DEBUG
