@@ -109,7 +109,7 @@ class Manager(object):
         port = int(config['server_port'])
         servers = self._relays.get(port, None)
         if servers:
-            self._send_control_data(b'{"stat":"ok", "password":"%s"}' % servers[0]._config['password'])
+            self._send_control_data(b'{"stat":"ok", "password":"%s", "token":"%s"}' % (servers[0]._config['password'],servers[0]._config['token']))
         else:
             self._send_control_data(b'{"stat":"ko"}')
 
