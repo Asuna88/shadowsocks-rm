@@ -14,15 +14,12 @@ class DbTransfer(object):
 
     instance = None
 
-    clients_last = {}
-
-    clients_cur = {}
+    clients = {}
 
 
     def __init__(self):
         self.last_get_transfer = {}
-        self.clients_last = {}
-        self.clients_cur = {}
+        self.clients = {}
 
     @staticmethod
     def get_instance():
@@ -96,8 +93,9 @@ class DbTransfer(object):
     def pull_db_all_user():
         conn = cymysql.connect(host=config.MYSQL_HOST, port=config.MYSQL_PORT, user=config.MYSQL_USER,
                                passwd=config.MYSQL_PASS, db=config.MYSQL_DB, charset='utf8')
+        query_when = config.MYSQL_TABLE + ' WHERE node = %s' % config.SS_NODE
         cur = conn.cursor()
-        cur.execute("SELECT port, u, d, transfer_enable, passwd, switch, enable, expires FROM " + config.MYSQL_TABLE)
+        cur.execute("SELECT port, u, d, transfer_enable, passwd, switch, enable, expires FROM " + query_when)
         rows = []
         for r in cur.fetchall():
             rows.append(list(r))
@@ -108,8 +106,15 @@ class DbTransfer(object):
     @staticmethod
     def del_server_out_of_bound_safe(rows):
         last_time = time.time()
+        last_clients = DbTransfer.get_instance().clients
+        process_clients = {}
+
         for row in rows:
             server = json.loads(DbTransfer.get_instance().send_command('stat: {"server_port":%s}' % row[0]))
+
+            # remove client from dict
+            del last_clients[row[0]]
+
             if server['stat'] != 'ko':
                 if row[5] == 0 or row[6] == 0:
                     #stop disable or switch off user
@@ -123,6 +128,7 @@ class DbTransfer(object):
                     #stop out expires user
                     logging.info('db stop server at port [%s] reason: out expires' % (row[0]))
                     DbTransfer.send_command('remove: {"server_port":%s}' % row[0])
+
                 if server['password'] != row[4]:
                     #password changed
                     logging.info('db stop server at port [%s] reason: password changed' % (row[0]))
@@ -131,7 +137,14 @@ class DbTransfer(object):
                 if row[5] == 1 and row[6] == 1 and row[1] + row[2] < row[3] and row[7] > last_time:
                     logging.info('db start server at port [%s] pass [%s]' % (row[0], row[4]))
                     DbTransfer.send_command('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
+                    process_clients[row[0]] = 1
                     print('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
+
+        for i in last_clients:
+            DbTransfer.send_command('remove: {"server_port":%s}' % i)
+            logging.info('db stop server at port [%s] reason: miss client' % i)
+
+        DbTransfer.get_instance().clients = process_clients
 
     @staticmethod
     def thread_db():
