@@ -14,8 +14,15 @@ class DbTransfer(object):
 
     instance = None
 
+    clients_last = {}
+
+    clients_cur = {}
+
+
     def __init__(self):
         self.last_get_transfer = {}
+        self.clients_last = {}
+        self.clients_cur = {}
 
     @staticmethod
     def get_instance():
