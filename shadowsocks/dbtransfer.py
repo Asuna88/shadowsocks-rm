@@ -14,6 +14,7 @@ class DbTransfer(object):
 
     instance = None
 
+    # save running clients
     clients = {}
 
 
@@ -106,14 +107,15 @@ class DbTransfer(object):
     @staticmethod
     def del_server_out_of_bound_safe(rows):
         last_time = time.time()
-        last_clients = DbTransfer.get_instance().clients
+        clients = DbTransfer.get_instance().clients
         process_clients = {}
 
         for row in rows:
             server = json.loads(DbTransfer.get_instance().send_command('stat: {"server_port":%s}' % row[0]))
 
             # remove client from dict
-            del last_clients[row[0]]
+            if row[0] in clients.keys():
+                del clients[row[0]]
 
             if server['stat'] != 'ko':
                 if row[5] == 0 or row[6] == 0:
@@ -137,10 +139,13 @@ class DbTransfer(object):
                 if row[5] == 1 and row[6] == 1 and row[1] + row[2] < row[3] and row[7] > last_time:
                     logging.info('db start server at port [%s] pass [%s]' % (row[0], row[4]))
                     DbTransfer.send_command('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
-                    process_clients[row[0]] = 1
                     print('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
+                
+                # save running client    
+                process_clients[row[0]] = 1
 
-        for i in last_clients:
+        # remove client NOT IN query results
+        for i in clients:
             DbTransfer.send_command('remove: {"server_port":%s}' % i)
             logging.info('db stop server at port [%s] reason: miss client' % i)
 
