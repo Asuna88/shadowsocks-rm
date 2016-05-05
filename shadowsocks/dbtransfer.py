@@ -115,6 +115,7 @@ class DbTransfer(object):
 
             # remove client from dict
             if row[0] in clients.keys():
+                #print('hit: {"server_port": %s}' % row[0])
                 del clients[row[0]]
 
             if server['stat'] != 'ko':
@@ -131,23 +132,28 @@ class DbTransfer(object):
                     logging.info('db stop server at port [%s] reason: out expires' % (row[0]))
                     DbTransfer.send_command('remove: {"server_port":%s}' % row[0])
 
-                if server['password'] != row[4]:
+                elif server['password'] != row[4]:
                     #password changed
                     logging.info('db stop server at port [%s] reason: password changed' % (row[0]))
                     DbTransfer.send_command('remove: {"server_port":%s}' % row[0])
+                else:
+                    # save running client    
+                    process_clients[row[0]] = 1        
             else:
                 if row[5] == 1 and row[6] == 1 and row[1] + row[2] < row[3] and row[7] > last_time:
                     logging.info('db start server at port [%s] pass [%s]' % (row[0], row[4]))
                     DbTransfer.send_command('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
+
+                    # save running client    
+                    process_clients[row[0]] = 1
+
                     print('add: {"server_port": %s, "password":"%s"}'% (row[0], row[4]))
-                
-                # save running client    
-                process_clients[row[0]] = 1
 
         # remove client NOT IN query results
-        for i in clients:
-            DbTransfer.send_command('remove: {"server_port":%s}' % i)
-            logging.info('db stop server at port [%s] reason: miss client' % i)
+        for client in clients:
+            #print('remove: {"server_port": %s}' % client)
+            DbTransfer.send_command('remove: {"server_port":%s}' % client)
+            logging.info('db stop server at port [%s] reason: miss client' % client)
 
         DbTransfer.get_instance().clients = process_clients
 
