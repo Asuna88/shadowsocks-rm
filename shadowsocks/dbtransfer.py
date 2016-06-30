@@ -94,7 +94,9 @@ class DbTransfer(object):
     def pull_db_all_user():
         conn = cymysql.connect(host=config.MYSQL_HOST, port=config.MYSQL_PORT, user=config.MYSQL_USER,
                                passwd=config.MYSQL_PASS, db=config.MYSQL_DB, charset='utf8')
-        query_when = config.MYSQL_TABLE + ' WHERE node = %s' % config.SS_ID
+        query_when = config.MYSQL_TABLE
+        if config.SS_DEDICATED == 'y':
+            query_when += ' WHERE node = %s' % config.SS_ID
         cur = conn.cursor()
         cur.execute("SELECT port, u, d, transfer_enable, passwd, switch, enable, expires FROM " + query_when)
         rows = []
