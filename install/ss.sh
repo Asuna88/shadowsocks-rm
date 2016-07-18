@@ -91,7 +91,7 @@ ldconfig
 
 
 cd /usr/local/
-wget https://git.oschina.net/reruin/jj/raw/master/install/ss.tar.gz
+wget https://raw.githubusercontent.com/reruin/shadowsocks-rm/mu/install/ss.tar.gz
 tar vxf ss.tar.gz && cd shadowsocks
 
 # 配置 ss

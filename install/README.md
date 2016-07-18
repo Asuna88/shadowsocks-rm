@@ -1,2 +1,2 @@
 #squid install shell
-wget -N --no-check-certificate https://git.oschina.net/reruin/jj/raw/master/install/ss.sh && bash ss.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/reruin/shadowsocks-rm/mu/install/ss.sh && bash ss.sh
