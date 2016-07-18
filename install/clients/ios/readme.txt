@@ -1,0 +1,1 @@
+iOS请在应用商店里安装Shadowrocket或者Surge即可
