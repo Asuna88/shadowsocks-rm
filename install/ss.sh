@@ -4,7 +4,7 @@ export PATH
 
 echo "
 #============================================
-#   SYSTEM REQUIRED:  Ubuntu 14.04 (64bit)
+#   SYSTEM REQUIRED:  Ubuntu / Debian
 #   DESCRIPTION:  Install ShadowSocks manyuser version
 #   VERSION:   1.0
 #   AUTHOR:    reruin <reruin@gmail.com>
@@ -81,7 +81,7 @@ char=`get_char`
 clear
 
 #install some necessary tools 快速加解密库 进程守护 pip
-yum install -y python-m2crypto build-essential supervisor python-pip || { apt-get update;apt-get -y upgrade; apt-get install -y wget python-m2crypto build-essential supervisor python-pip; } || { echo "依赖库没安装成功，程序暂停";exit 1; }
+{ apt-get update;apt-get upgrade -y; apt-get install -y wget python-m2crypto build-essential supervisor python-pip; } || { echo "依赖库没安装成功，程序暂停";exit 1; }
 
 pip install cymysql
 
