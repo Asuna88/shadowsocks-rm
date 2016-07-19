@@ -74,6 +74,7 @@ echo "Mysql User        : $mysqluser"
 echo "Mysql Password    : $mysqlpwd"
 echo "Mysql Table       : $mysqltable"
 echo "Node ID           : $nodeid"
+echo "SS dedicated mode : $nodemode"
 echo ""
 echo "Press any key to start...or Press Ctrl+c to cancel"
 char=`get_char`
@@ -94,6 +95,7 @@ cd /usr/local/
 wget https://raw.githubusercontent.com/reruin/shadowsocks-rm/mu/install/ss.tar.gz
 tar vxf ss.tar.gz && cd shadowsocks
 
+rm -f /usr/local/shadowsocks/config.py
 # 配置 ss
 cat >>/usr/local/shadowsocks/config.py<<EOF
 
