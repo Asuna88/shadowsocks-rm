@@ -52,7 +52,7 @@ fi
 
 read -p "Please input SS dedicated mode(n)" nodemode
 if [ "$nodemode" = "" ]; then
-    nodemode="y"
+    nodemode="n"
 fi
 
 clear
@@ -81,7 +81,7 @@ char=`get_char`
 clear
 
 #install some necessary tools 快速加解密库 进程守护 pip
-yum install -y python-m2crypto build-essential supervisor python-pip || { apt-get update;apt-get upgrade; apt-get install -y wget python-m2crypto build-essential supervisor python-pip; } || { echo "依赖库没安装成功，程序暂停";exit 1; }
+yum install -y python-m2crypto build-essential supervisor python-pip || { apt-get update;apt-get -y upgrade; apt-get install -y wget python-m2crypto build-essential supervisor python-pip; } || { echo "依赖库没安装成功，程序暂停";exit 1; }
 
 pip install cymysql
 
